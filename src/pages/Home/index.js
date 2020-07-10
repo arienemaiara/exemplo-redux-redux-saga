@@ -13,6 +13,8 @@ import * as CartActions from "../../store/modules/cart/actions";
 const Home = (props) => {
   const [products, setProducts] = useState([]);
 
+  const { amount } = props;
+
   useEffect(() => {
     const buscarProdutos = async () => {
       const response = await api.get("/products");
@@ -27,9 +29,9 @@ const Home = (props) => {
   }, []);
 
   const handleAddProduct = (product) => {
-    const { addToCart } = props;
+    const { addToCartRequest } = props;
 
-    addToCart(product);
+    addToCartRequest(product.id);
   };
 
   return (
@@ -42,7 +44,8 @@ const Home = (props) => {
 
           <button type="button" onClick={() => handleAddProduct(product)}>
             <div>
-              <MdAddShoppingCart size={16} color="#fff" />
+              <MdAddShoppingCart size={16} color="#fff" />{" "}
+              {amount[product.id] || 0}
             </div>
             <span>ADICIONAR AO CARRINHO</span>
           </button>
@@ -52,7 +55,14 @@ const Home = (props) => {
   );
 };
 
+const mapStateToProps = (state) => ({
+  amount: state.cart.reduce((amount, product) => {
+    amount[product.id] = product.amount;
+    return amount;
+  }, {}),
+});
+
 const mapDispatchToProps = (dispatch) =>
   bindActionCreators(CartActions, dispatch);
 
-export default connect(null, mapDispatchToProps)(Home);
+export default connect(mapStateToProps, mapDispatchToProps)(Home);
