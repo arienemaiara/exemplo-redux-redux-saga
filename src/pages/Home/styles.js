@@ -20,6 +20,11 @@ export const ProductList = styled.div`
     }
 
     > strong {
+      font-weight: bold;
+      color: #333;
+    }
+
+    > span {
       font-size: 21px;
       font-weight: bold;
       margin: 5px 0 20px;

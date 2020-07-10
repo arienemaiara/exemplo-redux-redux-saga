@@ -1,25 +1,55 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
+import { connect } from "react-redux";
 import { MdAddShoppingCart } from "react-icons/md";
+
+import { formatPrice } from "../../util/format";
+import api from "../../services/api";
 
 import { ProductList } from "./styles";
 
-function Home() {
+const Home = (props) => {
+  const [products, setProducts] = useState([]);
+
+  useEffect(() => {
+    const buscarProdutos = async () => {
+      const response = await api.get("/products");
+      const data = response.data.map((product) => ({
+        ...product,
+        priceFormatted: formatPrice(product.price),
+      }));
+      setProducts(data);
+    };
+
+    buscarProdutos();
+  }, []);
+
+  const handleAddProduct = (product) => {
+    const { dispatch } = props;
+
+    dispatch({
+      type: "ADD_TO_CART",
+      product,
+    });
+  };
+
   return (
     <ProductList>
-      <li>
-        {/* <img /> */}
-        <strong></strong>
-        <span></span>
+      {products.map((product) => (
+        <li key={product.id}>
+          <img src={product.image} alt={product.title} />
+          <strong>{product.title}</strong>
+          <span>{product.priceFormatted}</span>
 
-        <button type="button">
-          <div>
-            <MdAddShoppingCart size={16} color="#fff" />
-          </div>
-          <span>ADICIONAR AO CARRINHO</span>
-        </button>
-      </li>
+          <button type="button" onClick={() => handleAddProduct(product)}>
+            <div>
+              <MdAddShoppingCart size={16} color="#fff" />
+            </div>
+            <span>ADICIONAR AO CARRINHO</span>
+          </button>
+        </li>
+      ))}
     </ProductList>
   );
-}
+};
 
-export default Home;
+export default connect()(Home);
