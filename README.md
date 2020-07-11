@@ -2,7 +2,7 @@
 
 ### Execução do projeto
 No diretório do projeto, executar o comando
-### `yarn install`
+`yarn install`
 
 Para rodar a aplicação, executar o comando
-### `yarn start`
+`yarn start`
